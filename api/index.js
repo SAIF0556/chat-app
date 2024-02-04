@@ -14,6 +14,11 @@ const path = require('path')
 const dir = path.join(__dirname, 'uploads')
 
 dotenv.config()
+console.log(
+  process.env.MONGO_URL,
+  process.env.JWT_SECRET,
+  process.env.CLIENT_URL,
+)
 mongoose.set('strictQuery', false)
 mongoose.connect(process.env.MONGO_URL, (err) => {
   if (err) throw err
@@ -25,7 +30,12 @@ const app = express()
 app.use('/uploads', express.static(__dirname + '/uploads'))
 app.use(express.json())
 app.use(cookieParser())
-app.use(cors())
+app.use(
+  cors({
+    credentials: true,
+    origin: process.env.CLIENT_URL,
+  }),
+)
 
 async function getUserDataFromRequest(req) {
   return new Promise((resolve, reject) => {
